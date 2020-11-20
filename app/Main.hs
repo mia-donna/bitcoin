@@ -10,4 +10,5 @@ main = do
     print (getRateGBP json)
     print (getRateUS json)
 
-     
+ -- next we would add / capture more data from the json
+ -- then we could add cases for our queries e.g. case get GBP > then say this etc
