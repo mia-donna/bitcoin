@@ -7,5 +7,7 @@ main :: IO ()
 main = do
     let url = "https://api.coindesk.com/v1/bpi/currentprice.json"
     json <- download url
-    print (parse json)
+    print (getRateGBP json)
+    print (getRateUS json)
+
      
