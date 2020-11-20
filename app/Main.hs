@@ -1,6 +1,9 @@
 module Main where
 
-import Lib
+import HTTP
 
 main :: IO ()
-main = someFunc
+main = do
+    let url = "https://api.coindesk.com/v1/bpi/currentprice.json"
+    json <- download url
+    print json
