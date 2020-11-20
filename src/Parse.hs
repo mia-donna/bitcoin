@@ -17,6 +17,6 @@ import Control.Lens ( preview )
 
 
 parse :: L8.ByteString -> Maybe Text
-parse = preview (key "bpi" . key "USD" . key "rate" . _String)
+parse = preview (key "bpi" . key "GBP" . key "rate" . _String)
 
 
