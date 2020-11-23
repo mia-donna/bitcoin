@@ -10,7 +10,7 @@ main = do
     json <- download url
     case (parse json) of
         Left err -> print err
-        Right bits -> print (parse json)
+        Right bits -> print (bpi bits)
     
 
 

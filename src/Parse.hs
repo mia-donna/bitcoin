@@ -34,7 +34,7 @@ data BPIS = BPIS {
 instance FromJSON BPIS
 instance ToJSON BPIS
 
--- create a datatype for the BPI key 
+-- create a datatype for the BPI key - this works but returns as a really big object
 
 
 data BPI = BPI {
