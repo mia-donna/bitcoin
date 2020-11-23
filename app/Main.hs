@@ -2,8 +2,14 @@ module Main where
 
 import HTTP
 import Parse
+import Data.Tuple
 
+-- Created a function that will go through the list, extract the first element from each tuple and return a list of the extracted elements
 
+getRow :: [(a,b)] -> [a]
+getRow lst = [fst x | x <- lst]
+
+-- This returns the decoded mixed-type object (the a HashMap from Text keys to Value values, the Value type being a sum type representation of JS values)
 main :: IO ()
 main = do
     let url = "https://api.coindesk.com/v1/bpi/currentprice.json"
@@ -11,7 +17,17 @@ main = do
     case (parse json) of
         Left err -> print err
         Right bits -> print (bpi bits)
-    
+
+
+-- print (bpi bits) returns the bpi Object (all currencys)
+-- print (parseUSD json) returns the whole json "time" object
+-- print (parse json) returns the bpi object with label
+
+
+
+
+
+
 
 
 

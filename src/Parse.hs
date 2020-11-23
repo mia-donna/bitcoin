@@ -14,38 +14,51 @@ import Data.Text ( Text )
 -- added ,lens to cabal file build deps
 import Control.Lens ( preview )
 
--- create a datatype for the USD data structure 
-data USD = USD {
-    code :: String,
-    rate :: String
+
+-- 1. create a datatype for the all the currency's
+
+data Currencys = Currencys {
+   gbp :: Object,
+   usd :: Object,
+   eur :: Object
 } deriving (Show, Generic)
+
+instance FromJSON Currencys
+instance ToJSON Currencys
+
+-- 2. create a datatype for the specific USD data structure 
+data USD = USD {
+     codes :: String,
+     rates :: String
+ } deriving (Show, Generic)
 
 instance FromJSON USD
 instance ToJSON USD
 
--- create a datatype for the BPIs data structure with all the currency's
-
-data BPIS = BPIS {
-   usd :: Object,
-   gbp :: Object,
-   eur :: Object
-} deriving (Show, Generic)
-
-instance FromJSON BPIS
-instance ToJSON BPIS
-
--- create a datatype for the BPI key - this works but returns as a really big object
-
+-- 3. create a datatype for the whole BPI object 
 
 data BPI = BPI {
    bpi :: Object
 } deriving (Show, Generic)
 
+instance ToJSON BPI where 
 instance FromJSON BPI
-instance ToJSON BPI
 
 parse :: L8.ByteString -> Either String BPI
 parse json = eitherDecode json :: Either String BPI
+
+-- (TESTING) new function to try to return just USD object, used with print (parseUSD json) in main, returns the whole json
+
+parseUSD :: L8.ByteString -> Either String Currencys
+parseUSD json = eitherDecode json :: Either String Currencys
+
+-- (TESTING) Maybe we need to build a data type like this 
+data Coord = Coord { code :: String, rate :: String }
+
+instance ToJSON Coord where
+  toJSON (Coord x y) = object ["x" .= x, "y" .= y]
+
+  toEncoding (Coord x y) = pairs ("x" .= x <> "y" .= y)
 
 
 -- commented out for now, this works with the print function commented out on main
