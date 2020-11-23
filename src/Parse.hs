@@ -1,3 +1,4 @@
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
@@ -16,12 +17,20 @@ import Control.Lens ( preview )
 
 
 -- 1. create a datatype for the all the currency's
+-- added a field label modifier to try to recognise USD key instead of usd, didn't work
 
 data Currencys = Currencys {
    gbp :: Object,
    usd :: Object,
    eur :: Object
 } deriving (Show, Generic)
+
+{-
+$(deriveFromJSON defaultOptions {
+    fieldLabelModifier = let f "usd" = "USD"
+                             f other = other
+                         in f
+} ''Currencys) -}
 
 instance FromJSON Currencys
 instance ToJSON Currencys
@@ -52,18 +61,18 @@ parse json = eitherDecode json :: Either String BPI
 parseUSD :: L8.ByteString -> Either String Currencys
 parseUSD json = eitherDecode json :: Either String Currencys
 
--- (TESTING) Maybe we need to build a data type like this 
+{- (TESTING) Maybe we need to build a data type like this 
 data Coord = Coord { code :: String, rate :: String }
 
 instance ToJSON Coord where
   toJSON (Coord x y) = object ["x" .= x, "y" .= y]
 
   toEncoding (Coord x y) = pairs ("x" .= x <> "y" .= y)
-
+-}
 
 -- commented out for now, this works with the print function commented out on main
 --getRateGBP :: L8.ByteString -> Maybe Text
 --getRateGBP = preview (key "bpi" . key "GBP" . key "rate" . _String)
 
---getRateUSD :: L8.ByteString -> Maybe Text
---getRateUSD = preview (key "bpi" . key "USD" . key "rate" . _String)
+-- getRateUSD :: L8.ByteString -> Maybe Text
+-- getRateUSD = preview (key "bpi" . key "USD" . key "rate" . _String)
