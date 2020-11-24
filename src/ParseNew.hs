@@ -2,16 +2,20 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Parse where
+module Parse (
+    parse,
+    Currency (code, symbol, rate, description, rate_float),
+    Bpi (usd, gbp, eur),
+    Time (updated, updatedISO, updateduk),
+    Bitcoin (time, disclaimer, chartName, bpi)
+) where
 
-import Data.Aeson (eitherDecode)
+import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as L8
 import GHC.Generics ( Generic )
-import Data.Aeson.Types
 import Data.Aeson.TH(deriveJSON, defaultOptions, Options(fieldLabelModifier))
 import Data.Text (Text)
 
--- data Weakness = Weakness [String] deriving (Show, Generic)
 data Currency = Currency {
     code :: String,
     symbol :: String,
@@ -20,37 +24,13 @@ data Currency = Currency {
     rate_float :: Float
 } deriving (Show, Generic)
 
--- data USD = USD {
---     code :: String,
---     symbol :: String,
---     rate :: String,
---     description :: String,
---     rate_float :: Float
--- } deriving (Show, Generic)
-
--- data GBP = GBP {
---     code :: String,
---     symbol :: String,
---     rate :: String,
---     description :: String,
---     rate_float :: Float
--- } deriving (Show, Generic)
-
--- data EUR = EUR {
---     code :: String,
---     symbol :: String,
---     rate :: String,
---     description :: String,
---     rate_float :: Float
--- } deriving (Show, Generic)
-
 data Bpi = Bpi {
     usd :: Currency,
     gbp :: Currency,
     eur :: Currency
 } deriving (Show, Generic)
 
--- This gets the USD key from JSON and changes it to usd 
+-- This currency from lower to uppercase (eg. usd to USD)
 $(deriveJSON defaultOptions {
     fieldLabelModifier = \x -> 
         if x == "usd" 
@@ -67,7 +47,6 @@ data Time = Time {
     updateduk :: String
 } deriving (Show, Generic)
 
-
 data Bitcoin = Bitcoin {
     time :: Time,
     disclaimer :: String,
@@ -82,18 +61,8 @@ instance ToJSON Bitcoin
 instance FromJSON Time
 instance ToJSON Time
 
--- instance FromJSON Bpi
--- instance ToJSON Bpi
-
 instance FromJSON Currency
 instance ToJSON Currency
-
--- instance FromJSON GBP
--- instance ToJSON GBP
-
--- instance FromJSON EUR
--- instance ToJSON EUR
-
 
 parse :: L8.ByteString -> Either String Bitcoin
 parse json = eitherDecode json :: Either String Bitcoin
