@@ -2,12 +2,17 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Parse where
+module Parse (
+    parse,
+    Currency (code, symbol, rate, description, rate_float),
+    Bpi (usd, gbp, eur),
+    Time (updated, updatedISO, updateduk),
+    Bitcoin (time, disclaimer, chartName, bpi)
+) where
 
-import Data.Aeson (eitherDecode)
+import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as L8
 import GHC.Generics ( Generic )
-import Data.Aeson.Types
 import Data.Aeson.TH(deriveJSON, defaultOptions, Options(fieldLabelModifier))
 import Data.Text (Text)
 
