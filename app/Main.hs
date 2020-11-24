@@ -2,6 +2,7 @@ module Main where
 
 import HTTP
 import Parse
+-- import ParseNew
 import Data.Tuple
 
 -- Created a function that will go through the list, extract the first element from each tuple and return a list of the extracted elements
@@ -16,8 +17,9 @@ main = do
     json <- download url
     case (parse json) of
         Left err -> print err
-        -- Right bits -> print (bpi bits)
-        Right bits -> print (bitcoinInfo bits)
+        -- This works and returns Bpi, or Time, etc (but havent managed to get the whole thing yet)
+        Right bits -> print (bpi bits)
+        -- Right bits -> print (time bits)
 
 
 -- print (bpi bits) returns the bpi Object (all currencys)
