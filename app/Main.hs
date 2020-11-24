@@ -18,8 +18,8 @@ main = do
     case (parse json) of
         Left err -> print err
         -- This works and returns Bpi, or Time, etc (but havent managed to get the whole thing yet)
-        -- Right bits -> print (bpi bits)
-        Right bits -> print (time bits)
+        Right bits -> print (bpi bits)
+        -- Right bits -> print (time bits)
 
 
 -- print (bpi bits) returns the bpi Object (all currencys)

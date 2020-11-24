@@ -12,13 +12,21 @@ import Data.Aeson.TH(deriveJSON, defaultOptions, Options(fieldLabelModifier))
 import Data.Text (Text)
 
 -- data Weakness = Weakness [String] deriving (Show, Generic)
-data USD = USD {
+data Currency = Currency {
     code :: String,
     symbol :: String,
     rate :: String,
     description :: String,
     rate_float :: Float
 } deriving (Show, Generic)
+
+-- data USD = USD {
+--     code :: String,
+--     symbol :: String,
+--     rate :: String,
+--     description :: String,
+--     rate_float :: Float
+-- } deriving (Show, Generic)
 
 -- data GBP = GBP {
 --     code :: String,
@@ -37,13 +45,21 @@ data USD = USD {
 -- } deriving (Show, Generic)
 
 data Bpi = Bpi {
-    usd :: USD
-    -- gbp :: GBP,
-    -- eur :: EUR
+    usd :: Currency,
+    gbp :: Currency,
+    eur :: Currency
 } deriving (Show, Generic)
 
 -- This gets the USD key from JSON and changes it to usd 
-$(deriveJSON defaultOptions {fieldLabelModifier = \x -> if x == "usd" then "USD" else x} ''Bpi)
+$(deriveJSON defaultOptions {
+    fieldLabelModifier = \x -> 
+        if x == "usd" 
+            then "USD" 
+        else if x == "gbp" 
+            then "GBP" 
+        else if x == "eur" 
+            then "EUR" 
+        else x} ''Bpi)
 
 data Time = Time {
     updated :: String,
@@ -69,8 +85,8 @@ instance ToJSON Time
 -- instance FromJSON Bpi
 -- instance ToJSON Bpi
 
-instance FromJSON USD
-instance ToJSON USD
+instance FromJSON Currency
+instance ToJSON Currency
 
 -- instance FromJSON GBP
 -- instance ToJSON GBP
