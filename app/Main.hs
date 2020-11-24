@@ -16,7 +16,8 @@ main = do
     json <- download url
     case (parse json) of
         Left err -> print err
-        Right bits -> print (bpi bits)
+        -- Right bits -> print (bpi bits)
+        Right bits -> print (bitcoinInfo bits)
 
 
 -- print (bpi bits) returns the bpi Object (all currencys)
