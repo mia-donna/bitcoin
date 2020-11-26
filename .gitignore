@@ -1,2 +1,4 @@
 .stack-work/
 *~
+# For now don't commit the database
+bitcoin.sqlite
