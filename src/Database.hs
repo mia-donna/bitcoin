@@ -51,31 +51,34 @@ initialiseDB =
 
 -- to sql values
 
--- bpiToSqlValues :: Bpi -> [SqlValue] 
--- bpiToSqlValues bpi = [
---        toSql $ usd bpi,
---        toSql $ gbp bpi,
---        toSql $ eur bpi
---     ]  
+-- This will not work because Currency type is not an instance of toSql
+bpiToSqlValues :: Bpi -> [SqlValue] 
+bpiToSqlValues bpi = [
+       toSql $ usd bpi,
+       toSql $ gbp bpi,
+       toSql $ eur bpi
+    ]  
 
--- currencyToSqlValues :: Currency -> [SqlValue] 
--- currencyToSqlValues currency = [
---        toSql $ code currency,
---        toSql $ symbol currency,
---        toSql $ rate currency,
---        toSql $ description currency,
---        toSql $ rate_float currency
---     ]
+-- This will work as all values are Strings and Double
+currencyToSqlValues :: Currency -> [SqlValue] 
+currencyToSqlValues currency = [
+       toSql $ code currency,
+       toSql $ symbol currency,
+       toSql $ rate currency,
+       toSql $ description currency,
+       toSql $ rate_float currency
+    ]
 
--- currencyToSqlValues :: Time -> [SqlValue] 
--- timeToSqlValues time = [
---        toSql $ updated time,
---        toSql $ updated_ISO time,
---        toSql $ updateduk time
---     ]
+-- This will work because all values are Strings
+timeToSqlValues :: Time -> [SqlValue] 
+timeToSqlValues time = [
+       toSql $ updated time,
+       toSql $ updatedISO time,
+       toSql $ updateduk time
+    ]
 
 -- bitcoinToSqlValues :: Bitcoin -> [SqlValue] 
--- timeToSqlValues time = [
+-- bitcoinToSqlValues time = [
 --        toSql $ time bitcoin,
 --        toSql $ disclaimer bitcoin,
 --        toSql $ chartName bitcoin,
