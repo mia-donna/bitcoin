@@ -29,6 +29,7 @@ library
   exposed-modules:
       HTTP
       Parse
+      Database
   other-modules:
       Paths_bitcoin
   hs-source-dirs:

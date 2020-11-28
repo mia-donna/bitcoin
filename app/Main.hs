@@ -4,7 +4,7 @@ import HTTP
 import Parse
 -- import ParseNew
 import Data.Tuple
--- import Database
+import Database
 
 -- Created a function that will go through the list, extract the first element from each tuple and return a list of the extracted elements
 
@@ -16,15 +16,22 @@ main :: IO ()
 main = do
     let url = "https://api.coindesk.com/v1/bpi/currentprice.json"
     json <- download url
+    print "Parsing... "
     case (parse json) of
         Left err -> print err
         -- This works and returns Bpi, or Time, etc (but havent managed to get the whole thing yet)
         Right bits -> do
             print ("BPI: ")
             print (bpi bits)
-            print ("Time: ")
-            print (time  bits)
+            print "Saving on DB.."
+            conn <- initialiseDB
+            -- saveRecords (records recs) conn
+            print("Initialized")
+    print "Done!"
+
         -- Right bits -> print (time bits)
+
+
 
 
 -- print (bpi bits) returns the bpi Object (all currencys)
