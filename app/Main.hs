@@ -19,14 +19,27 @@ main = do
     print "Parsing... "
     case (parse json) of
         Left err -> print err
-        -- This works and returns Bpi, or Time, etc (but havent managed to get the whole thing yet)
         Right bits -> do
-            print ("BPI: ")
-            print (bpi bits)
+            -- print ("bpi: ")
+            -- print (bpi bits)
+            let bpiData = bpi bits
+            let usdCurrency = usd bpiData
+            let gbpCurrency = gbp bpiData
+            let eurCurrency = eur bpiData
+            print ("usd: ")
+            print(usdCurrency)
+            print ("gbp: ")
+            print(gbpCurrency)
+            print ("eur: ")
+            print(eurCurrency)
+            print ("time: ")
+            print (time bits)
             print "Saving on DB.."
             conn <- initialiseDB
-            -- saveRecords (records recs) conn
             print("Initialized")
+            -- Saves time records to db
+            saveTimeRecords (time bits) conn
+            print "Time records saved to db!"
     print "Done!"
 
         -- Right bits -> print (time bits)
