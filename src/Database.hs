@@ -2,6 +2,16 @@
 
 module Database 
     (initialiseDB,
+    currencyToSqlValues,
+    timeToSqlValues,
+    prepareInsertTimeStmt,
+    saveTimeRecords,
+    prepareInsertGbpStmt,
+    saveGbpRecords,
+    prepareInsertUsdStmt,
+    saveUsdRecords,
+    prepareInsertEurStmt,
+    saveEurRecords,
     -- saveRecords
     ) where
 
@@ -12,52 +22,52 @@ import Parse
 initialiseDB :: IO Connection
 initialiseDB =
  do
-    conn <- connectSqlite3 "bitcoin.sqlite"
-    run conn "CREATE TABLE IF NOT EXISTS bpi (\
-          \id INTEGER PRIMARY KEY AUTOINCREMENT, \
-          \usd_id INTEGER NOT NULL, \
-          \gbp_id INTEGER NOT NULL, \
-          \eur_id INTEGER NOT NULL ); \
-          \CREATE TABLE IF NOT EXISTS usd (\
-          \usd_id INTEGER PRIMARY KEY, \
+    conn <- connectSqlite3 "bitcoin.sqlite" 
+    run conn "CREATE TABLE IF NOT EXISTS usd (\
           \code VARCHAR(40) NOT NULL, \
           \symbol VARCHAR(40) NOT NULL, \
           \rate VARCHAR(40) NOT NULL,  \
-          \description VARCHAR(40) NOT NULL \
-          \FOREIGN KEY (usd_id) REFERENCES bpi (usd_id)); \
-          \CREATE TABLE IF NOT EXISTS gbp (\
-          \gbp_id INTEGER PRIMARY KEY, \
+          \description VARCHAR(40) NOT NULL, \
+          \rate_float DOUBLE \
+          \) " []       
+        --   \usd_id INTEGER PRIMARY KEY, \
+    commit conn
+    run conn "CREATE TABLE IF NOT EXISTS gbp (\
           \code VARCHAR(40) NOT NULL, \
           \symbol VARCHAR(40) NOT NULL, \
           \rate VARCHAR(40) NOT NULL,  \
-          \description VARCHAR(40) NOT NULL \
-          \FOREIGN KEY (gbp_id) REFERENCES bpi (gbp_id)); \
-          \CREATE TABLE IF NOT EXISTS eur (\
-          \eur_id INTEGER PRIMARY KEY, \
+          \description VARCHAR(40) NOT NULL, \
+          \rate_float DOUBLE \
+          \) " [] 
+        --   \gbp_id INTEGER PRIMARY KEY, \
+    commit conn
+    run conn "CREATE TABLE IF NOT EXISTS eur (\
           \code VARCHAR(40) NOT NULL, \
           \symbol VARCHAR(40) NOT NULL, \
           \rate VARCHAR(40) NOT NULL,  \
-          \description VARCHAR(40) NOT NULL \
-          \FOREIGN KEY (eur_id) REFERENCES bpi (eur_id));\
-          \CREATE TABLE IF NOT EXISTS time (\
-          \id INTEGER PRIMARY KEY AUTOINCREMENT, \
+          \description VARCHAR(40) NOT NULL, \
+          \rate_float DOUBLE \
+          \) " [] 
+        --   \eur_id INTEGER PRIMARY KEY, \
+    commit conn
+    -- run conn "CREATE TABLE IF NOT EXISTS bpi (\
+    --       \id INTEGER PRIMARY KEY AUTOINCREMENT, \
+    --       \usd_id INTEGER NOT NULL, \
+    --       \gbp_id INTEGER NOT NULL, \
+    --       \eur_id INTEGER NOT NULL, \
+    --       \FOREIGN KEY (usd_id) REFERENCES usd (usd_id), \
+    --       \FOREIGN KEY (gbp_id) REFERENCES gbp (gbp_id), \
+    --       \FOREIGN KEY (eur_id) REFERENCES eur (eur_id))" []
+    -- commit conn
+    run conn "CREATE TABLE IF NOT EXISTS time (\
           \updated VARCHAR(40) NOT NULL, \
           \updated_ISO VARCHAR(40) NOT NULL, \
-          \updateduk VARCHAR(40) NOT NULL \ 
-          \) " []                           
+          \updateduk VARCHAR(40) NOT NULL) " []                           
     commit conn
     return conn
 
 
 -- to sql values
-
--- This will not work because Currency type is not an instance of toSql
-bpiToSqlValues :: Bpi -> [SqlValue] 
-bpiToSqlValues bpi = [
-       toSql $ usd bpi,
-       toSql $ gbp bpi,
-       toSql $ eur bpi
-    ]  
 
 -- This will work as all values are Strings and Double
 currencyToSqlValues :: Currency -> [SqlValue] 
@@ -77,13 +87,53 @@ timeToSqlValues time = [
        toSql $ updateduk time
     ]
 
--- bitcoinToSqlValues :: Bitcoin -> [SqlValue] 
--- bitcoinToSqlValues time = [
---        toSql $ time bitcoin,
---        toSql $ disclaimer bitcoin,
---        toSql $ chartName bitcoin,
---        toSql $ bpi bitcoin
---     ]
+-- Prepare to insert 3 records into time table -- still need to add PK id and autoincrement records into this field
+prepareInsertTimeStmt :: Connection -> IO Statement
+prepareInsertTimeStmt conn = prepare conn "INSERT INTO time VALUES (?,?,?)"
+
+-- Saves time records to db 
+saveTimeRecords :: Time -> Connection -> IO ()
+saveTimeRecords time conn = do
+     stmt <- prepareInsertTimeStmt conn 
+     execute stmt (timeToSqlValues time) 
+     commit conn    
+
+
+-- Next create a functions to prepare currencies 
+-- GBP
+prepareInsertGbpStmt :: Connection -> IO Statement
+prepareInsertGbpStmt conn = prepare conn "INSERT INTO gbp VALUES (?,?,?,?,?)"
+
+-- Saves currency records to db 
+saveGbpRecords :: Currency -> Connection -> IO ()
+saveGbpRecords currency conn = do
+     stmt <- prepareInsertGbpStmt conn 
+     execute stmt (currencyToSqlValues currency) 
+     commit conn
+
+-- USD
+-- Next create a function to prepare Currency 
+prepareInsertUsdStmt :: Connection -> IO Statement
+prepareInsertUsdStmt conn = prepare conn "INSERT INTO usd VALUES (?,?,?,?,?)"
+
+-- Saves currency records to db 
+saveUsdRecords :: Currency -> Connection -> IO ()
+saveUsdRecords currency conn = do
+     stmt <- prepareInsertUsdStmt conn 
+     execute stmt (currencyToSqlValues currency) 
+     commit conn
+
+-- EUR
+-- Next create a function to prepare Currency 
+prepareInsertEurStmt :: Connection -> IO Statement
+prepareInsertEurStmt conn = prepare conn "INSERT INTO eur VALUES (?,?,?,?,?)"
+
+-- Saves currency records to db 
+saveEurRecords :: Currency -> Connection -> IO ()
+saveEurRecords currency conn = do
+     stmt <- prepareInsertEurStmt conn 
+     execute stmt (currencyToSqlValues currency) 
+     commit conn
 
 
 -- prepareInsertRecordStmt :: Connection -> IO Statement

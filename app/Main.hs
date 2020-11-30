@@ -20,8 +20,11 @@ main = do
     case (parse json) of
         Left err -> print err
         Right bits -> do
+            print ("time: ")
+            print (time bits)
             -- print ("bpi: ")
             -- print (bpi bits)
+            -- print(usd(bpi bits))
             let bpiData = bpi bits
             let usdCurrency = usd bpiData
             let gbpCurrency = gbp bpiData
@@ -32,18 +35,19 @@ main = do
             print(gbpCurrency)
             print ("eur: ")
             print(eurCurrency)
-            print ("time: ")
-            print (time bits)
-            print "Saving on DB.."
             conn <- initialiseDB
             print("Initialized")
             -- Saves time records to db
             saveTimeRecords (time bits) conn
-            print "Time records saved to db!"
+            -- print "Time records saved to db!"
+            -- Saves currency records to db
+            saveUsdRecords (usdCurrency) conn
+            print "USD records saved to db!"
+            saveGbpRecords (gbpCurrency) conn
+            print "GBP records saved to db!"
+            saveEurRecords (eurCurrency) conn
+            print "EUR records saved to db!"
     print "Done!"
-
-        -- Right bits -> print (time bits)
-
 
 
 
