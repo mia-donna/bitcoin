@@ -22,7 +22,7 @@ import Parse
 initialiseDB :: IO Connection
 initialiseDB =
  do
-    conn <- connectSqlite3 "bitcoin.sqlite" 
+    conn <- connectSqlite3 "bitcoin-test1.sqlite" 
     run conn "CREATE TABLE IF NOT EXISTS usd (\
           \code VARCHAR(40) NOT NULL, \
           \symbol VARCHAR(40) NOT NULL, \

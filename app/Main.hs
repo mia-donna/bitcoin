@@ -20,7 +20,7 @@ main = do
     case (parse json) of
         Left err -> print err
         Right bits -> do
-            print "time: "
+            print "The Bitcoin rate was last updated at: "
             print (time bits)
             -- print ("bpi: ")
             -- print (bpi bits)
@@ -29,11 +29,11 @@ main = do
             let usdCurrency = usd bpiData
             let gbpCurrency = gbp bpiData
             let eurCurrency = eur bpiData
-            print "usd: "
+            print "USD Bitcoin Rate Info: "
             print(usdCurrency)
-            print "gbp: "
+            print "GBP Bitcoin Rate Info: "
             print(gbpCurrency)
-            print "eur: "
+            print "EUR Bitcoin Rate Info: "
             print(eurCurrency)
             conn <- initialiseDB
             print"Initialized"
