@@ -2,3 +2,5 @@
 *~
 # For now don't commit the database
 bitcoin.sqlite
+
+bitcoin.json
